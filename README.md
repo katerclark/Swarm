@@ -1,3 +1,3 @@
 # Battleship
 
-# This will be a game called Battleship
+This will be a game called Battleship
