@@ -57,7 +57,7 @@ class MyGame(arcade.Window):
             for column in range(COLUMN_COUNT):
                 self.grid[row].append(0)  # Append a cell
 
-        arcade.set_background_color(arcade.color.BLACK)
+        arcade.set_background_color(arcade.color.BLUE_SAPPHIRE)
         # Hex code: #009DC4 for OCEAN_BLUE
         # Could also use OCEAN_BOAT_BLUE
 
@@ -74,9 +74,11 @@ class MyGame(arcade.Window):
             for column in range(COLUMN_COUNT):
                 # Figure out what color to draw the box
                 if self.grid[row][column] == 1:
-                    color = arcade.color.RED
+                    color = arcade.color.LIGHT_BLUE
+                # elif hit == True:
+                #     color = arcade.color.RED
                 else:
-                    color = arcade.color.WHITE
+                    color = arcade.color.BLUE_GREEN
 
                 # Do the math to figure out where the box is
                 x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
