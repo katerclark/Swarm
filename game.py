@@ -120,7 +120,6 @@ class Player(arcade.Window):
             else:
                 self.grid[row][column] = 0
 
-
 class GameMaster:
 
     def play(self):
