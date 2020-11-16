@@ -17,13 +17,14 @@ python -m arcade.examples.array_backed_grid
 """
 import arcade
 
+
 # Set how many rows and columns we will have
-ROW_COUNT = 15
-COLUMN_COUNT = 15
+ROW_COUNT = 10
+COLUMN_COUNT = 10
 
 # This sets the WIDTH and HEIGHT of each grid location
-WIDTH = 30
-HEIGHT = 30
+WIDTH = 45
+HEIGHT = 45
 
 # This sets the margin between each cell
 # and on the edges of the screen.
@@ -35,7 +36,7 @@ SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 SCREEN_TITLE = "Battleship"
 
 
-class MyGame(arcade.Window):
+class Window(arcade.Window):
     """
     Main application class.
     """
@@ -87,6 +88,17 @@ class MyGame(arcade.Window):
                 # Draw the box
                 arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
 
+    
+# Holds the array where the ships are (1) and aren't (0)
+class Board:
+    pass
+
+# Tracks mouse clicks and translates them to the other classes
+class Player(arcade.Window):
+
+    def __init__(self, width, height, title):
+        super().__init__(width, height, title)
+
     def on_mouse_press(self, x, y, button, modifiers):
         """
         Called when the user presses a mouse button.
@@ -109,14 +121,17 @@ class MyGame(arcade.Window):
                 self.grid[row][column] = 0
 
 
-def main():
+class GameMaster:
 
-    MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    arcade.run()
+    def play(self):
+        window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        # player = Player()
+        arcade.run()
 
 
 if __name__ == "__main__":
-    main()
+    game = GameMaster()
+    game.play()
 
 # https://arcade.academy/examples/platform_tutorial/index.html#step-1-install-and-open-a-window
 # https://arcade.academy/examples/array_backed_grid.html#array-backed-grid
