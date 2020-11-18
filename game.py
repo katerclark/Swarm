@@ -17,8 +17,6 @@ python -m arcade.examples.array_backed_grid
 """
 import arcade
 
-
-# Set how many rows and columns we will have
 ROW_COUNT = 10
 COLUMN_COUNT = 10
 
@@ -28,13 +26,12 @@ HEIGHT = 45
 
 # This sets the margin between each cell
 # and on the edges of the screen.
-MARGIN = 5
+MARGIN = 2
 
 # Do the math to figure out our screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
 SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 SCREEN_TITLE = "Battleship"
-
 
 class Window(arcade.Window):
     """
@@ -59,25 +56,23 @@ class Window(arcade.Window):
                 self.grid[row].append(0)  # Append a cell
 
         arcade.set_background_color(arcade.color.BLUE_SAPPHIRE)
-        # Hex code: #009DC4 for OCEAN_BLUE
-        # Could also use OCEAN_BOAT_BLUE
 
     def on_draw(self):
         """
         Render the screen.
         """
-
         # This command has to happen before we start drawing
         arcade.start_render()
+        hit = False
 
         # Draw the grid
         for row in range(ROW_COUNT):
             for column in range(COLUMN_COUNT):
                 # Figure out what color to draw the box
-                if self.grid[row][column] == 1:
+                if self.grid[row][column] == 1 and hit == False:
                     color = arcade.color.LIGHT_BLUE
-                # elif hit == True:
-                #     color = arcade.color.RED
+                elif self.grid[row][column] == 1 and hit == True:
+                    color = arcade.color.RED
                 else:
                     color = arcade.color.BLUE_GREEN
 
@@ -87,18 +82,7 @@ class Window(arcade.Window):
 
                 # Draw the box
                 arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
-
     
-# Holds the array where the ships are (1) and aren't (0)
-class Board:
-    pass
-
-# Tracks mouse clicks and translates them to the other classes
-class Player(arcade.Window):
-
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
-
     def on_mouse_press(self, x, y, button, modifiers):
         """
         Called when the user presses a mouse button.
@@ -113,12 +97,17 @@ class Player(arcade.Window):
         # Make sure we are on-grid. It is possible to click in the upper right
         # corner in the margin and go to a grid location that doesn't exist
         if row < ROW_COUNT and column < COLUMN_COUNT:
-
-            # Flip the location between 1 and 0.
             if self.grid[row][column] == 0:
                 self.grid[row][column] = 1
-            else:
-                self.grid[row][column] = 0
+            
+    
+# Holds the array where the ships are (1) and aren't (0)
+class Board:
+    pass
+
+# Tracks mouse clicks and translates them to the other classes
+class Player(arcade.Window):
+    pass
 
 class GameMaster:
 
@@ -132,5 +121,5 @@ if __name__ == "__main__":
     game = GameMaster()
     game.play()
 
-# https://arcade.academy/examples/platform_tutorial/index.html#step-1-install-and-open-a-window
 # https://arcade.academy/examples/array_backed_grid.html#array-backed-grid
+# http://learn.arcade.academy/chapters/25_array_backed_grids/array_backed_grids.html
