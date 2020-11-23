@@ -57,21 +57,23 @@ class Window(arcade.Window):
 
         arcade.set_background_color(arcade.color.BLUE_SAPPHIRE)
 
-    def on_draw(self):
+    def on_draw(self, tile):
         """
         Render the screen.
         """
         # This command has to happen before we start drawing
         arcade.start_render()
-        hit = False
+        tile.ship = False
 
         # Draw the grid
         for row in range(ROW_COUNT):
             for column in range(COLUMN_COUNT):
                 # Figure out what color to draw the box
-                if self.grid[row][column] == 1 and hit == False:
+                if self.grid[row][column] == 1 and tile.ship == False:
+                    tile.hit == False
                     color = arcade.color.LIGHT_BLUE
-                elif self.grid[row][column] == 1 and hit == True:
+                elif self.grid[row][column] == 1 and tile.ship == True:
+                    tile.hit == True
                     color = arcade.color.RED
                 else:
                     color = arcade.color.BLUE_GREEN
@@ -102,8 +104,22 @@ class Window(arcade.Window):
             
     
 # Holds the array where the ships are (1) and aren't (0)
-class Board:
-    pass
+class Tile:
+
+    def __init__(self):
+        self.hit = False
+        self.ship = False
+    
+    def has_ship(self, x, y):
+        return ship[y][x]
+
+    # def is_hit(self, x, y):
+    #     if self.hit == False:
+    #         window.color = arcade.color.LIGHT_BLUE
+    #     elif self.hit == True:
+    #         window.color = arcade.color.RED
+    #     else:
+    #         window.color = arcade.color.BLUE_GREEN
 
 # Tracks mouse clicks and translates them to the other classes
 class Player(arcade.Window):
@@ -113,7 +129,7 @@ class GameMaster:
 
     def play(self):
         window = Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-        # player = Player()
+        tile = Tile()
         arcade.run()
 
 
@@ -123,3 +139,4 @@ if __name__ == "__main__":
 
 # https://arcade.academy/examples/array_backed_grid.html#array-backed-grid
 # http://learn.arcade.academy/chapters/25_array_backed_grids/array_backed_grids.html
+# https://www.youtube.com/watch?v=5d1CfnYT-KM 
