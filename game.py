@@ -1,4 +1,6 @@
 import arcade
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
 ROW_COUNT = 10
 COLUMN_COUNT = 10
@@ -32,13 +34,13 @@ class GameMaster(arcade.Window):
         self.player_two = Player(self.player_two_grid, self.player_one_grid)
        
         self.input_service = InputService()
-        self.output_service = OutputService
+        self.output_service = OutputService()
 
     def play(self):
-        self.player_one.populate_map(self.player_one_grid)
-        self.player_two.populate_map(self.player_two_grid)
+        # self.player_one.populate_map(self.player_one_grid)
+        # self.player_two.populate_map(self.player_two_grid)
         
-        while player_one.is_alive and player_two.is_alive:
+        while self.player_one.is_alive and self.player_two.is_alive:
             arcade.run()
 
 
@@ -57,15 +59,15 @@ class Player:
         return self._their_grid
 
     def attack_tile(self, grid):
-        get_their_grid().process_attack(row, column)
+        GameMaster.Player.get_their_grid().process_attack(GameMaster.InputService.row, GameMaster.InputService.column)
 
     def place_bug(self, grid):
-        get_my_grid().process_bug_placement(row, column)
+        GameMaster.Player.get_my_grid().process_bug_placement(GameMaster.InputService.row, GameMaster.InputService.column)
 
-    # player can add their bugs to the map
+    # player can add their bugs to the map // DOESN'T WORK YET
     def populate_map(self, grid):
-        for i in range(NUMBER_OF_BUGS):
-            place_bug(get_my_grid())
+        for _ in range(NUMBER_OF_BUGS):
+            GameMaster.Player.place_bug(GameMaster.Player.get_my_grid())
 
     # play is alive if they have more than 0 living bugs on the map
     def is_player_alive(self):
@@ -90,12 +92,12 @@ class Grid:
 
     # tells tile when has been attacked
     def process_attack(self, row, column):
-        tile = get_tile(row, column)
+        tile = GameMaster.Grid.get_tile(row, column)
         tile._has_been_attacked = True
 
     # tells a tile when a bug has been placed on it
     def process_bug_placement(self, row, column):
-        tile = get_tile(row, column)
+        tile = GameMaster.Grid.get_tile(row, column)
         tile._is_bug = True
 
 
@@ -109,15 +111,33 @@ class Tile:
         self._has_been_attacked = False
 
         # we can put this next section either here or in OutputService (where it is currently)
-        # bug is dead
-        if self._is_bug == True and self._has_been_attacked == True:
-            pass
-        # bug is alive
-        if self._is_bug == True and self._has_been_attacked == False:
-            pass
-        # failed attempt (bug was not in selected tile)
-        if self._is_bug == False and self._has_been_attacked == True:
-            pass
+        # if GameMaster.Player._my_grid:
+        #     # bug is dead
+        #     if self._is_bug == True and self._has_been_attacked == True:
+        #         GameMaster.Player.bugs_on_map = GameMaster.Player.bugs_on_map - 1
+        #         color = arcade.color.RED
+        #     # bug is alive
+        #     elif self._is_bug == True and self._has_been_attacked == False:
+        #         color = arcade.color.ORANGE
+        #         plt.imshow(mpimg.imread('bug.png'))
+        #     # failed attempt (bug was not in selected tile)
+        #     elif self._is_bug == False and self._has_been_attacked == True:
+        #         color = arcade.color.BLACK
+        #     else:
+        #         color = arcade.color.CHARCOAL
+
+        # if GameMaster.Player._their_grid:
+        #     # bug is dead
+        #     if self._is_bug == True and self._has_been_attacked == True:
+        #         color = arcade.color.RED
+        #     # bug is alive
+        #     elif self._is_bug == True and self._has_been_attacked == False:
+        #         color = arcade.color.CHARCOAL
+        #     # failed attempt (bug was not in selected tile)
+        #     elif self._is_bug == False and self._has_been_attacked == True:
+        #         color = arcade.color.BLACK
+        #     else:
+        #         color = arcade.color.CHARCOAL
 
 
 class InputService:
@@ -130,12 +150,10 @@ class InputService:
 
         # determines if we are clicking in the grid
         if row < ROW_COUNT and column < COLUMN_COUNT:
-            if grid.tiles[row][column] == 0:
-                grid.tiles[row][column] = 1
+            if GameMaster.Grid.tiles[row][column] == 0:
+                GameMaster.Grid.tiles[row][column] = 1
 
         print(f"Tile coordinates: ({row}, {column})")
-
-        return row, column
 
 
 class OutputService:
@@ -144,21 +162,27 @@ class OutputService:
         arcade.set_background_color(arcade.color.BLACK)
         arcade.start_render()
 
-        for tile in player.get_my_grid():
+        for tile in GameMaster.Player._my_grid:
             # bug is dead
             if tile._is_bug == True and tile._has_been_attacked == True:
-                player.bugs_on_map = player.bugs_on_map - 1
+                Player.bugs_on_map = Player.bugs_on_map - 1
                 color = arcade.color.RED
             # bug is alive
             elif tile._is_bug == True and tile._has_been_attacked == False:
                 color = arcade.color.ORANGE
+                plt.imshow(mpimg.imread('bug.png'))
             # failed attempt (bug was not in selected tile)
             elif tile._is_bug == False and tile._has_been_attacked == True:
                 color = arcade.color.BLACK
             else:
                 color = arcade.color.CHARCOAL
+            
+            x = (MARGIN + WIDTH) * GameMaster.InputService.column + MARGIN + WIDTH // 2
+            y = (MARGIN + HEIGHT) * GameMaster.InputService.row + MARGIN + HEIGHT // 2
 
-        for tile in player.get_their_grid():
+            arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
+
+        for tile in GameMaster.Player._their_grid:
             # bug is dead
             if tile._is_bug == True and tile._has_been_attacked == True:
                 color = arcade.color.RED
@@ -171,8 +195,8 @@ class OutputService:
             else:
                 color = arcade.color.CHARCOAL
 
-            x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
-            y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
+            x = (MARGIN + WIDTH) * GameMaster.InputService.column + MARGIN + WIDTH // 2
+            y = (MARGIN + HEIGHT) * GameMaster.InputService.row + MARGIN + HEIGHT // 2
     
             arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)
 
@@ -307,7 +331,3 @@ if __name__ == "__main__":
 # if __name__ == "__main__":
 #     game = GameMaster()
 #     game.play()
-
-# # https://arcade.academy/examples/array_backed_grid.html#array-backed-grid
-# # http://learn.arcade.academy/chapters/25_array_backed_grids/array_backed_grids.html
-# # https://www.youtube.com/watch?v=5d1CfnYT-KM 
