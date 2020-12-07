@@ -228,11 +228,11 @@ class HumanPlayer:
 
 
 
-print("*************** Welcome to BATTLESHIP! ***************")
-num_of_players = None
+print("*************** Welcome to SWARM! ***************")
+num_of_players = 2
 while num_of_players == None:
     try:
-        num_of_players = int(input("Would you like to play with 1 player or 2? "))
+        print("yay!")
         if (num_of_players != 1) and (num_of_players != 2):
             raise Exception()
     except:
