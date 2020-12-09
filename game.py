@@ -1,6 +1,7 @@
 import arcade
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import os.path
 
 ROW_COUNT = 10
 COLUMN_COUNT = 10
@@ -18,6 +19,8 @@ SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
 SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
 SCREEN_TITLE = "Swarm"
 
+CURRENT_FOLDER = os.path.dirname(__file__)
+
 # How many bugs a player can place on each their grid
 NUMBER_OF_BUGS = 15
 
@@ -32,16 +35,29 @@ class GameMaster(arcade.Window):
         # creates two players and tells them which grid belongs to them and which one belongs to the other player
         self.player_one = Player(self.player_one_grid, self.player_two_grid)
         self.player_two = Player(self.player_two_grid, self.player_one_grid)
+
+        # players = [self.player_one, self.player_two]
        
         self.input_service = InputService()
         self.output_service = OutputService()
 
     def play(self):
-        # self.player_one.populate_map(self.player_one_grid)
-        # self.player_two.populate_map(self.player_two_grid)
-        
-        while self.player_one.is_alive and self.player_two.is_alive:
-            arcade.run()
+        self.player_one.populate_map(self.player_one, self.player_one_grid, self.input_service)
+        self.player_two.populate_map(self.player_two, self.player_two_grid, self.input_service)
+
+        while self.player_one.is_alive == True and self.player_two.is_alive == True:
+            if self.player_one.is_turn == True:
+                self.player_two.is_turn = False
+                arcade.run()
+                self.player_one.is_turn = False
+                self.player_two.is_turn = True
+            elif self.player_two.is_turn == True:
+                self.player_one.is_turn = False
+                arcade.run()
+                self.player_one.is_turn == True
+                self.player_two.is_turn == False
+            else:
+                exit("Sorry, we manflunctioned.")
 
 
 class Player:
@@ -51,6 +67,7 @@ class Player:
         self._their_grid = their_grid
         self.bugs_on_map = NUMBER_OF_BUGS
         self.is_alive = True
+        self.is_turn = True
 
     def get_my_grid(self):
         return self._my_grid
@@ -61,13 +78,17 @@ class Player:
     def attack_tile(self, grid):
         GameMaster.Player.get_their_grid().process_attack(GameMaster.InputService.row, GameMaster.InputService.column)
 
-    def place_bug(self, grid):
-        GameMaster.Player.get_my_grid().process_bug_placement(GameMaster.InputService.row, GameMaster.InputService.column)
+    def place_bug(self, player, grid, input_service):
+        player.get_my_grid().process_bug_placement(input_service.row, input_service.column)
+
+    def take_turn(self):
+        GameMaster.Player.attack_tile(GameMaster.Player.Grid.get_their_grid())
+        return
 
     # player can add their bugs to the map // DOESN'T WORK YET
-    def populate_map(self, grid):
+    def populate_map(self, player, grid, input_service):
         for _ in range(NUMBER_OF_BUGS):
-            GameMaster.Player.place_bug(GameMaster.Player.get_my_grid())
+            player.place_bug(player, player.get_my_grid(), input_service)
 
     # play is alive if they have more than 0 living bugs on the map
     def is_player_alive(self):
@@ -92,16 +113,16 @@ class Grid:
 
     # tells tile when has been attacked
     def process_attack(self, row, column):
-        tile = GameMaster.Grid.get_tile(row, column)
+        tile = self.get_tile(row, column)
         tile._has_been_attacked = True
 
     # tells a tile when a bug has been placed on it
     def process_bug_placement(self, row, column):
-        tile = GameMaster.Grid.get_tile(row, column)
+        tile = self.get_tile(row, column)
         tile._is_bug = True
 
 
-class Tile:
+class Tile(arcade.Sprite):
     """Contains tile state"""
 
     def __init__(self):
@@ -109,51 +130,27 @@ class Tile:
         self._is_bug = False
         # describes tile - has not been clicked (attacked)
         self._has_been_attacked = False
-
-        # we can put this next section either here or in OutputService (where it is currently)
-        # if GameMaster.Player._my_grid:
-        #     # bug is dead
-        #     if self._is_bug == True and self._has_been_attacked == True:
-        #         GameMaster.Player.bugs_on_map = GameMaster.Player.bugs_on_map - 1
-        #         color = arcade.color.RED
-        #     # bug is alive
-        #     elif self._is_bug == True and self._has_been_attacked == False:
-        #         color = arcade.color.ORANGE
-        #         plt.imshow(mpimg.imread('bug.png'))
-        #     # failed attempt (bug was not in selected tile)
-        #     elif self._is_bug == False and self._has_been_attacked == True:
-        #         color = arcade.color.BLACK
-        #     else:
-        #         color = arcade.color.CHARCOAL
-
-        # if GameMaster.Player._their_grid:
-        #     # bug is dead
-        #     if self._is_bug == True and self._has_been_attacked == True:
-        #         color = arcade.color.RED
-        #     # bug is alive
-        #     elif self._is_bug == True and self._has_been_attacked == False:
-        #         color = arcade.color.CHARCOAL
-        #     # failed attempt (bug was not in selected tile)
-        #     elif self._is_bug == False and self._has_been_attacked == True:
-        #         color = arcade.color.BLACK
-        #     else:
-        #         color = arcade.color.CHARCOAL
+        super().__init__()
 
 
 class InputService:
 
+    def __init__(self):
+        self.row = 0
+        self.column = 0
+
     def on_mouse_press(self, x, y, button, modifiers):
         
         # turns x and y into row and column
-        column = int(x // (WIDTH + MARGIN))
-        row = int(y // (HEIGHT + MARGIN))
+        self.column = int(x // (WIDTH + MARGIN))
+        self.row = int(y // (HEIGHT + MARGIN))
 
         # determines if we are clicking in the grid
-        if row < ROW_COUNT and column < COLUMN_COUNT:
-            if GameMaster.Grid.tiles[row][column] == 0:
-                GameMaster.Grid.tiles[row][column] = 1
+        if self.row < ROW_COUNT and self.column < COLUMN_COUNT:
+            if GameMaster.Grid.tiles[self.row][self.column] == 0:
+                GameMaster.Grid.tiles[self.row][self.column] = 1
 
-        print(f"Tile coordinates: ({row}, {column})")
+        print(f"Tile coordinates: ({self.row}, {self.column})")
 
 
 class OutputService:
@@ -170,7 +167,11 @@ class OutputService:
             # bug is alive
             elif tile._is_bug == True and tile._has_been_attacked == False:
                 color = arcade.color.ORANGE
-                plt.imshow(mpimg.imread('bug.png'))
+                # plt.imshow(mpimg.imread('bug.png'))
+                file_path = CURRENT_FOLDER + "/bug.png"
+                texture = arcade.load_texture(file_path)
+                tile.texture = texture
+                tile.draw()
             # failed attempt (bug was not in selected tile)
             elif tile._is_bug == False and tile._has_been_attacked == True:
                 color = arcade.color.BLACK
