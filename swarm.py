@@ -177,7 +177,7 @@ class HumanPlayer:
                     # Check if the bug is valid
                     raise Exception
             except ValueError:
-                print("You must a valid position for the bug.  Please try again.")
+                print("You must choose a valid position for the bug.  Please try again.")
                 position = None
             except:
                 print("You must choose a position that is (a) on the board and (b) doesn't intersect" + \
