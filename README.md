@@ -6,9 +6,3 @@ Requirements: Python 3
 d) Installation instructions for required libraries
 e) How to run the game (command line)
 Authors: Rose Towne tow20001@byui.edu, Kate Clark cla16022@byui.edu
-
-OTHER INSTRUCTIONS TO DELETE BEFORE TURNING IT IN
-a) To: manleym@byui.edu
-b) CC: each member of your team
-c) Subject: Final Project Submission
-d) Body: Team number, URL to the project repository
