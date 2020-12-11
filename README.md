@@ -5,7 +5,7 @@ b) Swarm is a 2-player strategy guessing game (like battleship). The goal is to 
 c) Requirements: Python 3
 d) Installation instructions for required libraries
 e) How to run the game (command line)
-f) Authors: Rose Towne tow20001@byu.edu
+f) Rose Towne tow20001@byui.edu, Kate Clark cla16022@byui.edu
 
 OTHER INSTRUCTIONS TO DELETE BEFORE TURNING IT IN
 a) To: manleym@byui.edu
