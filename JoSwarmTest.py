@@ -44,34 +44,34 @@ class Board:
     # Initialize the board to a 10x10 grid of empty cells
     def __init__(self):
         # The grid
-        self.grid = [[" _"]*10 for i in range(10)]
+        self.grid = [[" _"]*8 for i in range(8)]
         # hit_count is used to count successful attacks. 
         # When the hit count reaches 17, the game is over.  
         self.hit_count = 0
 
     # Converts the grid to a string for printing.
     def __str__(self):
-        str_val = "  0 1 2 3 4 5 6 7 8 9\n"
-        for i in range(10):
+        str_val = "  0 1 2 3 4 5 6 7 \n"
+        for i in range(8):
             str_val += str(i)
-            for j in range(10):
+            for j in range(8):
                 str_val += self.grid[i][j]
-            if i != 9:
+            if i != 7:
                 str_val += "\n"
         return str_val
 
     # Makes the grid into a string
     # Used to show the board to the opponent.
     def get_public_view(self):
-        str_val = "  0 1 2 3 4 5 6 7 8 9\n"
-        for i in range(10):
+        str_val = "  0 1 2 3 4 5 6 7 \n"
+        for i in range(8):
             str_val += str(i)
-            for j in range(10):
+            for j in range(8):
                 if self.grid[i][j] == " B":
                     str_val += " _"
                 else:
                     str_val += self.grid[i][j]
-            if i != 9:
+            if i != 7:
                 str_val += "\n"
         return str_val
 
@@ -112,7 +112,7 @@ class Board:
 
     # Check if any bugs are left
     def is_defeated(self):
-        if self.hit_count == 17:
+        if self.hit_count == 10:
             return True
         else:
             return False
@@ -138,7 +138,7 @@ class HumanPlayer:
     def __init__(self, player_name):
         self.player_name = player_name
         self.board = Board()
-        self.swarm = [Bug("Bug", 1)]*17
+        self.swarm = [Bug("Bug", 1)]*10
         self.opponent = None
 
     # Connect the player to his/her opponent.
@@ -201,10 +201,10 @@ class HumanPlayer:
                 coords = position.split(",")
                 x = int(coords[0])
                 y = int(coords[1])
-                if (x < 0) or (x > 9) or (y < 0) or (y > 9):
+                if (x < 0) or (x > 7) or (y < 0) or (y > 7):
                     raise Exception
             except:
-                print("You must a valid position in the form x,y where both x and y are integers in the range of" + \
+                print("You must enter a valid position in the form x,y where both x and y are integers in the range of" + \
                       "0-9. Please try again.")
                 position = None
 

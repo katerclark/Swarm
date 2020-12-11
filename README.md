@@ -5,7 +5,7 @@ b) Short paragraph describing your game
 c) Requirements (python version, arcade version or any other libraries)
 d) Installation instructions for required libraries
 e) How to run the game (command line)
-f) Authors with contact information (your team members)
+f) Rose towne tow20001@byui.edu
 
 OTHER INSTRUCTIONS TO DELETE BEFORE TURNING IT IN
 a) To: manleym@byui.edu
